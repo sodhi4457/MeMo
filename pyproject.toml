@@ -1,7 +1,7 @@
 [project]
 name = "memo"
-version = "0.2.0"
-description = "MEMO: Memory as a Model - Step A (data synthesis) + Step B (memory model SFT)"
+version = "0.3.0"
+description = "MEMO: Memory as a Model - Step A (data synthesis) + Step B (memory model SFT) + Step C (inference)"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -12,8 +12,8 @@ dependencies = [
     "tqdm>=4.66.0",
 ]
 
-# Step B (memory model training) deps are isolated in an optional group so
-# Step A users never pay the torch/transformers install cost.
+# Step B/C (memory model training + inference) deps are isolated in an optional
+# group so Step A users never pay the torch/transformers install cost.
 #
 # Install locally (CPU torch, fine for smoke tests):
 #   uv sync --extra train
@@ -29,6 +29,14 @@ train = [
     "datasets>=2.20",
     "safetensors>=0.4",
 ]
+# Step C inference-only (no datasets / accelerate needed):
+#   pip install -e .[infer]
+infer = [
+    "torch>=2.1",
+    "transformers>=4.45",
+    "peft>=0.13",
+    "safetensors>=0.4",
+]
 # QLoRA (4-bit) needs bitsandbytes; pulled separately so Step B without QLoRA
 # doesn't drag in a binary that's painful to install on some platforms.
 qlora = [
@@ -38,10 +46,11 @@ qlora = [
 [project.scripts]
 memo-step-a = "memo.cli:main"
 memo-step-b = "memo_train.cli:main"
+memo-step-c = "memo_infer.cli:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/memo", "src/memo_train"]
+packages = ["src/memo", "src/memo_train", "src/memo_infer"]

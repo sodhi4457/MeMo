@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where uv *)",
+      "Bash(uv --version)",
+      "Bash(uv sync *)",
+      "Bash(uv run python -c ' *)"
+    ]
+  }
+}
